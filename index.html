@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="一言カレンダー">
+  <meta name="theme-color" content="#E8783A">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>一言カレンダー</title>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ホーム画面 -->
+    <div id="view-home" class="view active">
+      <div class="nav-bar">
+        <span class="nav-title">今日の一言</span>
+      </div>
+      <div class="view-content" id="home-content"></div>
+    </div>
+
+    <!-- カレンダー画面 -->
+    <div id="view-calendar" class="view">
+      <div class="nav-bar">
+        <span class="nav-title">カレンダー</span>
+      </div>
+      <div class="view-content" id="calendar-content"></div>
+    </div>
+
+    <!-- 設定画面 -->
+    <div id="view-settings" class="view">
+      <div class="nav-bar">
+        <span class="nav-title">設定</span>
+      </div>
+      <div class="view-content" id="settings-content"></div>
+    </div>
+
+    <!-- 編集モーダル -->
+    <div id="modal-backdrop" class="modal-backdrop hidden"></div>
+    <div id="modal-edit" class="modal hidden">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <button id="modal-cancel" class="modal-btn-cancel">閉じる</button>
+        <span id="modal-title" class="modal-title"></span>
+        <button id="modal-save" class="modal-btn-save">保存</button>
+      </div>
+      <div class="modal-body">
+        <!-- ① テキスト入力（主役） -->
+        <textarea id="modal-message" class="message-input" placeholder="一言を入力…" rows="6"></textarea>
+
+        <!-- ② 写真添付（サブ） -->
+        <div class="attach-section">
+          <p class="attach-section-label">📎 写真を添付</p>
+          <div id="modal-photo-preview" class="photo-preview hidden">
+            <img id="modal-photo-img" src="" alt="写真">
+            <button id="modal-photo-remove" class="photo-remove-btn">✕</button>
+          </div>
+          <div class="photo-actions">
+            <label class="photo-btn">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+              ライブラリから選ぶ
+              <input type="file" id="photo-library" accept="image/*" class="hidden-input">
+            </label>
+            <label class="photo-btn">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              カメラで撮影
+              <input type="file" id="photo-camera" accept="image/*" capture="environment" class="hidden-input">
+            </label>
+          </div>
+        </div>
+
+        <button id="modal-delete" class="delete-btn hidden">この日の一言を削除</button>
+      </div>
+    </div>
+
+    <!-- 全画面写真ビュワー -->
+    <div id="fullscreen-viewer" class="fullscreen-viewer hidden">
+      <button id="fullscreen-close" class="fullscreen-close">✕</button>
+      <div id="fullscreen-img-wrap" class="fullscreen-img-wrap">
+        <img id="fullscreen-img" src="" alt="写真">
+      </div>
+    </div>
+
+    <!-- タブバー -->
+    <nav id="tabbar">
+      <button class="tab-item active" data-tab="home">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>ホーム</span>
+      </button>
+      <button class="tab-item" data-tab="calendar">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>カレンダー</span>
+      </button>
+      <button class="tab-item" data-tab="settings">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>設定</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

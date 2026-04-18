@@ -1,0 +1,605 @@
+/* ===== リセット & ベース ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #E8783A;
+  --primary-light: #FFF0E6;
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --text: #1C1C1E;
+  --text2: #8E8E93;
+  --border: #E5E5EA;
+  --tab-h: 60px;
+  --nav-h: 52px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea { font-family: inherit; }
+img { display: block; max-width: 100%; }
+
+/* ===== アプリ全体 ===== */
+#app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== ビュー（タブコンテンツ） ===== */
+.view {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: var(--safe-top);
+}
+.view.active { display: flex; }
+
+.nav-bar {
+  height: var(--nav-h);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  background: rgba(242,242,247,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+}
+.nav-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.view-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  padding-bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
+}
+
+/* ===== タブバー ===== */
+#tabbar {
+  display: flex;
+  height: calc(var(--tab-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text2);
+  font-size: 10px;
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+.tab-item.active { color: var(--primary); }
+.tab-item svg { width: 24px; height: 24px; }
+
+/* ===== カード ===== */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* ===== ホーム画面 ===== */
+.home-date {
+  text-align: center;
+  color: var(--text2);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.home-photo-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.home-photo-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.expand-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.home-message {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px;
+  font-size: 18px;
+  line-height: 1.7;
+  text-align: center;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.home-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0 24px;
+  color: var(--text2);
+  gap: 12px;
+}
+.home-empty svg { opacity: 0.3; }
+.home-empty p { font-size: 15px; }
+
+.home-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.btn-secondary {
+  flex: 1;
+  padding: 12px 8px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ===== カレンダー ===== */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 4px 0;
+}
+.cal-month-label {
+  font-size: 18px;
+  font-weight: 600;
+}
+.cal-nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  color: var(--primary);
+  font-size: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+.cal-weekdays span:first-child { color: #FF3B30; }
+.cal-weekdays span:last-child  { color: #007AFF; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 4px;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 2px;
+  border-radius: 10px;
+  cursor: pointer;
+  min-height: 52px;
+  gap: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+.cal-day:active { background: var(--bg); }
+.cal-day.empty { cursor: default; }
+
+.cal-day-num {
+  font-size: 15px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.cal-day.today .cal-day-num {
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+}
+.cal-day.sun .cal-day-num { color: #FF3B30; }
+.cal-day.sat .cal-day-num { color: #007AFF; }
+.cal-day.today .cal-day-num { color: white !important; }
+
+.cal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0;
+}
+.cal-day.has-entry .cal-dot { opacity: 1; }
+
+/* ===== 設定画面 ===== */
+.settings-section {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.settings-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 16px 6px;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  gap: 12px;
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.settings-row:first-of-type { border-top: none; }
+.settings-row svg { color: var(--primary); flex-shrink: 0; }
+.settings-row .settings-value {
+  margin-left: auto;
+  color: var(--text2);
+  font-size: 15px;
+}
+.settings-note {
+  font-size: 13px;
+  color: var(--text2);
+  padding: 8px 16px 14px;
+  line-height: 1.5;
+}
+
+/* ===== 編集モーダル ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  transition: opacity 0.25s;
+}
+
+.modal {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  z-index: 101;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  padding-bottom: var(--safe-bottom);
+}
+.modal.open { transform: translateY(0); }
+.modal.hidden { display: none; }
+.modal-backdrop.hidden { display: none; }
+
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 12px;
+  flex-shrink: 0;
+}
+.modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text2);
+}
+.modal-btn-cancel { color: var(--text2); font-size: 16px; padding: 4px 0; }
+.modal-btn-save {
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 4px 0;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.photo-preview {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.photo-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.photo-remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.message-input {
+  width: 100%;
+  padding: 14px;
+  background: var(--card);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  resize: none;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.message-input::placeholder { color: var(--text2); }
+
+.photo-actions {
+  display: flex;
+  gap: 10px;
+}
+.photo-btn {
+  flex: 1;
+  padding: 12px 8px;
+  background: var(--card);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.hidden-input { display: none; }
+
+.delete-btn {
+  width: 100%;
+  padding: 14px;
+  background: #FFF0F0;
+  color: #FF3B30;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ===== 全画面写真ビュワー ===== */
+.fullscreen-viewer {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fullscreen-viewer.hidden { display: none; }
+
+.fullscreen-close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  color: white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 201;
+}
+
+.fullscreen-img-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+}
+.fullscreen-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform-origin: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ===== トースト通知 ===== */
+.toast {
+  position: fixed;
+  bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(50,50,50,0.9);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 300;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== 添付写真（ホーム） ===== */
+.home-attachment {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+}
+.attachment-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.attachment-thumb {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.attachment-expand {
+  text-align: right;
+  padding: 6px 12px 8px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+/* ===== 写真添付ボタン行（ホーム） ===== */
+.attach-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.btn-attach {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 6px;
+  background: var(--card);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+/* ===== 写真添付セクション（モーダル内） ===== */
+.attach-section {
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.attach-section-label {
+  padding: 10px 14px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+/* ===== ユーティリティ ===== */
+.hidden { display: none !important; }
