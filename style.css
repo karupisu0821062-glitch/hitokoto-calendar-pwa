@@ -614,5 +614,42 @@ img { display: block; max-width: 100%; }
   color: var(--text2);
 }
 
+/* ===== プレビューモーダル ===== */
+.preview-message {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 17px;
+  line-height: 1.75;
+  text-align: center;
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.preview-photo {
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: relative;
+}
+.preview-photo-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.preview-photo-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.35);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
 /* ===== ユーティリティ ===== */
 .hidden { display: none !important; }

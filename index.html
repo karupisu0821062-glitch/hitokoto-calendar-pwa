@@ -40,8 +40,19 @@
       <div class="view-content" id="settings-content"></div>
     </div>
 
-    <!-- 編集モーダル -->
+    <!-- プレビューモーダル（登録済み日付を表示） -->
     <div id="modal-backdrop" class="modal-backdrop hidden"></div>
+    <div id="modal-preview" class="modal hidden">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <button id="preview-close" class="modal-btn-cancel">閉じる</button>
+        <span id="preview-title" class="modal-title"></span>
+        <button id="preview-edit-btn" class="modal-btn-save">編集</button>
+      </div>
+      <div class="modal-body" id="preview-body"></div>
+    </div>
+
+    <!-- 編集モーダル -->
     <div id="modal-edit" class="modal hidden">
       <div class="modal-handle"></div>
       <div class="modal-header">

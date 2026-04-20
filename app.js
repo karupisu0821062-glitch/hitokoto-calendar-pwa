@@ -257,11 +257,17 @@ function renderCalendar() {
   document.getElementById('cal-grid').addEventListener('click', e => {
     const cell = e.target.closest('[data-key]');
     if (cell) {
-      State.calSelectedKey = cell.dataset.key;
+      const key = cell.dataset.key;
+      State.calSelectedKey = key;
       // 選択ハイライトを即座に反映
       document.querySelectorAll('.cal-day.selected').forEach(el => el.classList.remove('selected'));
       cell.classList.add('selected');
-      openEditModal(cell.dataset.key);
+      // 登録済みならプレビュー、未登録なら直接編集
+      if (State.entries[key]) {
+        openPreviewModal(key);
+      } else {
+        openEditModal(key);
+      }
     }
   });
 }
@@ -369,6 +375,58 @@ function parseDate(s) {
   const m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if (!m) return null;
   return new Date(+m[1], +m[2]-1, +m[3]);
+}
+
+/* ========== プレビューモーダル ========== */
+async function openPreviewModal(key) {
+  State.editKey = key;
+  const entry = State.entries[key];
+  const [y, m, d] = key.split('-');
+  const date = new Date(+y, +m-1, +d);
+
+  document.getElementById('preview-title').textContent = formatDateJa(date);
+
+  const body = document.getElementById('preview-body');
+  let html = '';
+
+  // メッセージ
+  if (entry?.message) {
+    html += `<div class="preview-message">${escHtml(entry.message)}</div>`;
+  }
+
+  // 写真
+  if (entry?.hasImage) {
+    const blob = await idbGet(key);
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      html += `
+        <div class="preview-photo" id="preview-photo-wrap" data-key="${key}">
+          <img src="${url}" alt="写真" class="preview-photo-img">
+          <div class="preview-photo-hint">タップで拡大 ⤢</div>
+        </div>`;
+    }
+  }
+
+  body.innerHTML = html;
+
+  // 写真タップで全画面
+  document.getElementById('preview-photo-wrap')
+    ?.addEventListener('click', () => openFullscreen(key));
+
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+  document.getElementById('modal-preview').classList.remove('hidden');
+  requestAnimationFrame(() => {
+    document.getElementById('modal-preview').classList.add('open');
+  });
+}
+
+function closePreviewModal() {
+  const modal = document.getElementById('modal-preview');
+  modal.classList.remove('open');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    document.getElementById('modal-backdrop').classList.add('hidden');
+  }, 300);
 }
 
 /* ========== 編集モーダル ========== */
@@ -623,10 +681,25 @@ function init() {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
+  // プレビューモーダル
+  document.getElementById('preview-close').addEventListener('click', closePreviewModal);
+  document.getElementById('preview-edit-btn').addEventListener('click', () => {
+    const key = State.editKey;
+    closePreviewModal();
+    // アニメーション完了後に編集モーダルを開く
+    setTimeout(() => openEditModal(key), 320);
+  });
+
   // モーダル: 保存 / キャンセル / 削除
   document.getElementById('modal-save').addEventListener('click', saveEntry);
   document.getElementById('modal-cancel').addEventListener('click', closeEditModal);
-  document.getElementById('modal-backdrop').addEventListener('click', closeEditModal);
+  document.getElementById('modal-backdrop').addEventListener('click', () => {
+    // プレビューが開いていればプレビューを閉じる、編集が開いていれば編集を閉じる
+    const preview = document.getElementById('modal-preview');
+    const edit    = document.getElementById('modal-edit');
+    if (!preview.classList.contains('hidden')) closePreviewModal();
+    else if (!edit.classList.contains('hidden')) closeEditModal();
+  });
   document.getElementById('modal-delete').addEventListener('click', deleteEntry);
 
   // 全画面を閉じる
