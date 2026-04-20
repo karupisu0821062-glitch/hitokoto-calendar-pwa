@@ -58,12 +58,13 @@ function saveEntries(entries) {
 
 /* ========== 状態 ========== */
 const State = {
-  tab:        'home',
-  month:      new Date(),
-  entries:    loadEntries(),   // { dateKey: { message, hasImage } }
-  editKey:    null,            // 編集中の dateKey
-  editBlob:   null,            // 編集中の画像 Blob
-  editRemove: false,           // 既存写真を削除するか
+  tab:            'home',
+  month:          new Date(),
+  entries:        loadEntries(),   // { dateKey: { message, hasImage } }
+  editKey:        null,            // 編集中の dateKey
+  editBlob:       null,            // 編集中の画像 Blob
+  editRemove:     false,           // 既存写真を削除するか
+  calSelectedKey: null,            // カレンダーで選択中の日付
 };
 
 /* ========== 日付ユーティリティ ========== */
@@ -219,12 +220,14 @@ function renderCalendar() {
     const dow  = date.getDay();
     const isToday = key === todayK;
     const hasEntry = !!State.entries[key];
+    const isSelected = key === State.calSelectedKey;
     const classes = [
       'cal-day',
       dow === 0 ? 'sun' : '',
       dow === 6 ? 'sat' : '',
-      isToday   ? 'today' : '',
-      hasEntry  ? 'has-entry' : '',
+      isToday    ? 'today' : '',
+      hasEntry   ? 'has-entry' : '',
+      isSelected ? 'selected' : '',
     ].filter(Boolean).join(' ');
 
     grid += `
@@ -253,7 +256,13 @@ function renderCalendar() {
   });
   document.getElementById('cal-grid').addEventListener('click', e => {
     const cell = e.target.closest('[data-key]');
-    if (cell) openEditModal(cell.dataset.key);
+    if (cell) {
+      State.calSelectedKey = cell.dataset.key;
+      // 選択ハイライトを即座に反映
+      document.querySelectorAll('.cal-day.selected').forEach(el => el.classList.remove('selected'));
+      cell.classList.add('selected');
+      openEditModal(cell.dataset.key);
+    }
   });
 }
 
@@ -510,6 +519,7 @@ function escHtml(str) {
 
 /* ========== タブ切替 ========== */
 function switchTab(tab) {
+  if (tab !== 'calendar') State.calSelectedKey = null;
   State.tab = tab;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.tab-item').forEach(b => {

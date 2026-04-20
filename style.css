@@ -290,6 +290,20 @@ img { display: block; max-width: 100%; }
 }
 .cal-day.has-entry .cal-dot { opacity: 1; }
 
+/* 選択中の日付 */
+.cal-day.selected {
+  background: var(--primary-light);
+}
+.cal-day.selected .cal-day-num {
+  background: var(--primary);
+  color: white !important;
+  font-weight: 700;
+  box-shadow: 0 0 0 3px rgba(232,120,58,0.25);
+}
+.cal-day.selected .cal-dot {
+  background: white;
+}
+
 /* ===== 設定画面 ===== */
 .settings-section {
   background: var(--card);
@@ -376,7 +390,7 @@ img { display: block; max-width: 100%; }
 .modal-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text2);
+  color: var(--primary);
 }
 .modal-btn-cancel { color: var(--text2); font-size: 16px; padding: 4px 0; }
 .modal-btn-save {
@@ -555,8 +569,7 @@ img { display: block; max-width: 100%; }
 }
 .attachment-thumb {
   width: 100%;
-  max-height: 220px;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
 .attachment-expand {

@@ -1,4 +1,4 @@
-const CACHE = 'hitokoto-v3';
+const CACHE = 'hitokoto-v4';
 const ASSETS = ['./', './index.html', './style.css', './app.js', './manifest.json',
                 './icons/apple-touch-icon.png', './icons/icon-192.png', './icons/icon-512.png'];
 
